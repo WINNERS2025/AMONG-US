@@ -1,0 +1,170 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Quiz Impostor</title><link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0d1f;--sf:#1c2140;--tx:#fff;--mu:#9aa3d0;--ac:#3d7bff;--bad:#ff4a55;--ok:#2fd16b;--bd:#3a4170;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}:root[data-theme="dark"]{color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font:700 16px/1.35 "Varela Round",system-ui,sans-serif;background:radial-gradient(#fff 1px,transparent 1.6px) 0 0/97px 97px,radial-gradient(#9fb4ff 1px,transparent 1.4px) 31px 47px/61px 61px,#0b0d1f;min-height:100vh}
+#app{max-width:520px;margin:0 auto;padding:14px 14px 150px}
+h1{margin:8px 0;font-size:34px;text-shadow:0 3px 0 #000;text-align:center;letter-spacing:1px}h2,h3{margin:4px 0 8px}.c{text-align:center;color:var(--mu)}
+.card{background:var(--sf);border:3px solid var(--bd);border-radius:16px;padding:12px;margin:10px 0}
+input,select{width:100%;padding:11px;margin:5px 0;border-radius:10px;border:3px solid var(--bd);background:#0f1330;color:var(--tx);font:inherit}
+button{font:inherit;padding:11px 12px;border-radius:12px;border:3px solid #6b74a8;background:#2b3050;color:var(--tx);margin:4px 4px 4px 0;cursor:pointer}button:disabled{opacity:.45}
+.pri{background:var(--ok);color:#06210f;border-color:#0c6b32;width:100%;font-size:20px}.ghost{width:100%}.big{font-size:28px;padding:14px}
+.opt{display:block;width:100%;text-align:left;background:#e8edf5;color:#111;border-color:#7b86a8;margin:6px 0}
+.row{display:flex;flex-wrap:wrap}.row2{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.top{display:flex;justify-content:space-between;align-items:center}.pin{font-size:34px;letter-spacing:6px;color:#ffe45c;text-shadow:0 3px 0 #000}
+.floor{background:linear-gradient(#4a5268,#343b50);border:4px solid #181c2b;border-radius:18px;padding:12px;display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:center;margin:10px 0}
+.pl{display:flex;flex-direction:column;align-items:center;font-size:13px;animation:bob 2.4s ease-in-out infinite}.pl b{text-shadow:0 2px 0 #000;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pl b.bad{color:var(--bad)}.pl small{color:var(--mu)}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.room{position:relative;height:250px;background:linear-gradient(#4a5268,#2e3447);border:4px solid #181c2b;border-radius:18px;margin:10px 0;overflow:hidden}.room .pl{position:absolute}
+.tbar{position:relative;height:26px;background:#2b2f3f;border:3px solid #000;border-radius:6px;overflow:hidden;margin:6px 0}.tbar i{display:block;height:100%;background:var(--ok);transition:width .4s}.tbar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:20px;text-shadow:0 1px 0 #000}
+.sb{background:var(--bad);text-align:center;border-radius:10px;padding:8px;margin:8px 0;animation:fl 1s infinite}@keyframes fl{50%{opacity:.6}}
+.sabo::after{content:"";position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 90px 20px rgba(255,0,30,.55);animation:fl 1s infinite}
+.rl{text-align:center;font-size:14px;color:#8dd8ff}.rl.i{color:var(--bad)}
+.hud{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(3,74px);gap:8px;direction:rtl;z-index:10}
+.hb{position:relative;width:74px;height:74px;padding:4px;margin:0;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:ltr}.hb i{font-style:normal;font-size:26px}.hb em{position:absolute;font-style:normal;font-size:26px;text-shadow:0 2px 0 #000}
+.em{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));width:74px;height:74px;background:#7a1620;border-color:var(--bad);font-size:11px;padding:4px;margin:0;z-index:10}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.win{width:100%;max-width:480px;max-height:90vh;overflow:auto;background:#cfd8e3;color:#111;border:4px solid #6b7690;border-radius:16px;padding:12px}
+.wt{display:flex;justify-content:space-between;align-items:center}.wt button{margin:0;padding:4px 10px;background:var(--bad);color:#fff;border-color:#7a1620}
+.pk{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.pk button{display:flex;flex-direction:column;align-items:center;background:#fff;color:#111;border-color:#7b86a8}
+.toast{position:fixed;top:calc(60px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-size:22px;text-shadow:0 2px 0 #000;z-index:15;pointer-events:none}
+.rv{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(#1b4f9a,#06142e);padding:20px;text-align:center}.rv.bad{background:radial-gradient(#9a1b27,#2e0610)}.rv h1{font-size:54px;color:#8dd8ff}.rv.bad h1{color:var(--bad)}
+.mt{background:#cfd8e3;color:#111;border:4px solid #6b7690;border-radius:18px;padding:12px}.mh{display:flex;justify-content:space-between;align-items:center;font-size:14px}.mt .c{color:#455}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vc{position:relative;display:flex;align-items:center;gap:8px;margin:0;background:#fff;color:#111;border-color:#8b97b5;text-align:left;font-size:14px}.vc.sel{background:#8de6a8}.vc u{text-decoration:none;position:absolute;right:4px;top:2px;font-size:11px;background:var(--ok);color:#fff;border-radius:9px;padding:0 5px}.vc:disabled{opacity:.4}
+.skip{width:100%;margin-top:8px;background:#fff;color:#111;border-color:#8b97b5}.skip.sel{background:#8de6a8}
+.ej{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:22px;gap:12px}.ej svg{animation:fly 3s linear infinite}@keyframes fly{from{transform:translateX(-120px) rotate(0)}to{transform:translateX(120px) rotate(360deg)}}
+.end h1{font-size:60px}.end.v h1{color:#8dd8ff}.end.d h1{color:var(--bad)}
+.log{font-size:13px;color:var(--mu);text-align:center}
+.q{display:flex;gap:6px;align-items:center}.q span{flex:1;font-size:14px}.q button{margin:0}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COL=['#e5384f','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#14b8a6','#ec4899','#94a3b8','#84cc16'];
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let G,S=null,host=false,off=0,view='home',H={},tk=0,ui={},me={id:Math.random().toString(36).slice(2,9)};
+let cfg={t:3,i:1,kcd:20},Q=[];
+try{Q=JSON.parse(localStorage.getItem('qiq')||'[]')}catch(e){}
+if(!Q.length)Q=[{q:'What is 7 × 8?',o:['54','56','58','64'],c:1},{q:'Which planet is closest to the Sun?',o:['Venus','Earth','Mercury','Mars'],c:2},{q:'H2O is the formula for?',o:['Salt','Water','Gold','Air'],c:1}];
+const saveQ=()=>{try{localStorage.setItem('qiq',JSON.stringify(Q))}catch(e){}};
+const now=()=>Date.now()+off;
+const prog=()=>Object.values(S.players).filter(p=>p.role==='c').reduce((s,p)=>s+p.done,0);
+const dead=p=>!p.alive&&(host||p.rev||p.id===me.id);
+const chip=p=>`<span class="chip${dead(p)?' dead':''}" style="--c:${p.c}">${dead(p)?'💀 ':''}${esc(p.n)}${!host&&S.players[me.id]&&S.players[me.id].role==='i'&&p.role==='i'?' 🔪':''}</span>`;
+const plist=()=>`<div class=chips>${Object.values(S.players).map(chip).join('')}</div>`;
+const bar=()=>`<div class=bar><i style="width:${S.goal?Math.min(100,prog()/S.goal*100):0}%"></i></div>`;
+const err=t=>{$('#er').textContent=t};
+
+/* ---------- screens before game ---------- */
+function showHome(){view='home';$('#app').innerHTML=`<h1>${bean('#d62839',72)}<br>QUIZ IMPOSTOR</h1><p class=c>Finish quiz tasks. Find the impostors.</p>
+<div class=card><b>Student</b><input id=pn placeholder="Room PIN" inputmode=numeric><input id=nm placeholder="Your name" maxlength=12><button class=pri id=js>Join room</button></div>
+<div class=card><b>Teacher</b><button class=ghost id=ts>Create a room</button></div><p id=er class=c></p>`;
+$('#js').onclick=join;$('#ts').onclick=showSetup}
+function showSetup(){view='setup';$('#app').innerHTML=`<h2>Teacher setup</h2><div class=card><b>Add question</b><input id=qt placeholder="Question">
+${[0,1,2,3].map(i=>`<div class=row2><input id=o${i} placeholder="Choice ${i+1}"><input type=radio name=cr value=${i} ${i?'':'checked'} style="width:40px"></div>`).join('')}
+<p class=c style="margin:0">Select the radio for the correct choice</p><button class=pri id=aq>Add question</button></div><div class=card id=ql></div>
+<div class=card><b>Tasks (correct answers) per crew member</b><input id=ct type=number min=1 value=${cfg.t}><b>Impostors</b><select id=ci><option>1<option>2<option>3</select><b>Kill cooldown (seconds)</b><input id=ck type=number min=5 value=${cfg.kcd}></div>
+<button class=pri id=mk>Create room</button><button class=ghost id=bk>Back</button><p id=er class=c></p>`;
+const rl=()=>{$('#ql').innerHTML=`<b>Questions (${Q.length})</b>`+Q.map((x,i)=>`<div class=q><span>${esc(x.q)}</span><button data-d=${i}>✕</button></div>`).join('')};rl();
+$('#ql').onclick=e=>{const d=e.target.dataset.d;if(d!=null){Q.splice(+d,1);saveQ();rl()}};
+$('#aq').onclick=()=>{const q=$('#qt').value.trim(),o=[0,1,2,3].map(i=>$('#o'+i).value.trim()).filter(Boolean);const ci=+document.querySelector('[name=cr]:checked').value;
+const t=$('#o'+ci).value.trim();if(!q||o.length<2||!t)return err('Need a question, 2+ choices and a correct one');
+Q.push({q,o,c:o.indexOf(t)});saveQ();['#qt','#o0','#o1','#o2','#o3'].forEach(s=>$(s).value='');err('');rl()};
+$('#bk').onclick=showHome;$('#mk').onclick=create}
+
+/* ---------- connection ---------- */
+async function join(){const pin=$('#pn').value.trim(),n=$('#nm').value.trim();if(!pin||!n)return err('Enter the PIN and your name');
+const R=await (window.claude&&window.claude.use('room'));if(!R)return err('Rooms are unavailable here');
+G=await R.join(pin);view='game';me.n=n;G.on('s',m=>{if(m.data&&m.data.pin===pin){S=m.data;off=S.now-Date.now();paint()}});
+const j=()=>{if(!(S&&S.players[me.id]))G.emit('a',{t:'join',id:me.id,n})};j();setInterval(j,1500);paint()}
+async function create(){if(!Q.length)return err('Add at least one question');cfg={t:Math.max(1,+$('#ct').value||3),i:+$('#ci').value,kcd:Math.max(5,+$('#ck').value||20)};
+const R=await (window.claude&&window.claude.use('room'));if(!R)return err('Rooms are unavailable here');
+const pin=String(Math.floor(10000+Math.random()*90000));G=await R.join(pin);host=true;view='game';off=0;
+S={pin,phase:'lobby',players:{},cur:{},bodies:[],sab:0,sc:0,scr:{},last:{},log:[],goal:0,now:Date.now()};
+G.on('a',m=>{if(m.data&&!m.isMe)act(m.data)});setInterval(loop,500);paint()}
+
+/* ---------- host engine ---------- */
+const bc=()=>{S.now=Date.now();G.emit('s',S);paint()};
+const log=t=>{S.log.unshift(t);S.log.length=Math.min(S.log.length,4)};
+function decoys(o){const pool=shuf([].concat(...Q.map(x=>x.o)).filter(x=>!o.includes(x)));['All of the above','None of the above','Not sure'].forEach(x=>pool.push(x));let k=0;for(const x of pool){if(k>=2)break;if(!o.includes(x)){o.push(x);k++}}}
+function assignQ(id){const q=Q[Math.floor(Math.random()*Q.length)],o=q.o.slice();H[id]=o[q.c];if((S.scr[id]||0)>Date.now())decoys(o);S.cur[id]={t:q.q,o:shuf(o)}}
+function check(){const v=Object.values(S.players),ci=v.filter(p=>p.role==='i'&&p.alive).length,cc=v.filter(p=>p.role==='c'&&p.alive).length;let w=null;
+if(!ci)w='c';else if(ci>=cc)w='i';else if(prog()>=S.goal)w='c';if(w){S.phase='end';S.win=w}}
+function start(){const ids=shuf(Object.keys(S.players));if(ids.length<3)return;const k=Math.min(cfg.i,Math.max(1,Math.floor((ids.length-1)/2))),n=Date.now();
+ids.forEach((id,j)=>Object.assign(S.players[id],{role:j<k?'i':'c',alive:true,done:0,rev:0,mt:0,kcd:n+15000,tcd:0}));
+Object.assign(S,{rd:(S.rd||0)+1,phase:'play',cur:{},bodies:[],sab:0,sc:n+20000,scr:{},last:{},goal:(ids.length-k)*cfg.t,log:['Game started']});H={};bc()}
+function resolve(){const m=S.meet,t={};let top=null,mx=0,tie=false;
+Object.entries(m.votes).forEach(([v,g])=>{if(S.players[v]&&S.players[v].alive)t[g]=(t[g]||0)+1});
+for(const k in t){if(t[k]>mx){mx=t[k];top=k;tie=false}else if(t[k]===mx)tie=true}
+let tx='No one was ejected.';if(top&&top!=='skip'&&!tie){const p=S.players[top];p.alive=false;p.rev=1;m.ec=p.c;tx=`${p.n} was ${p.role==='i'?'':'not '}An Impostor.`}
+m.done=1;m.res=tx;m.until=Date.now()+6000;log(tx);check();bc()}
+function loop(){if(!S)return;const n=Date.now();
+if(S.phase==='meet'){const m=S.meet;if(m.done){if(n>m.until){S.phase='play';S.bodies=[];S.cur={};H={};Object.values(S.players).forEach(p=>{if(p.role==='i')p.kcd=n+10000});bc();return}}else if(n>m.until){resolve();return}}
+if(++tk%4==0)bc()}
+function act(d){const n=Date.now();
+if(d.t==='join'){if(!S.players[d.id]&&S.phase==='lobby'&&Object.keys(S.players).length<15){S.players[d.id]={id:d.id,n:String(d.n).slice(0,12),c:COL[Object.keys(S.players).length%COL.length],role:'c',alive:true,done:0};bc()}return}
+const P=S.players[d.id];if(!P)return;
+if(S.phase==='meet'&&d.t==='vote'&&!S.meet.done&&P.alive){if(d.tg!=='skip'&&!(S.players[d.tg]&&S.players[d.tg].alive))return;S.meet.votes[d.id]=d.tg;
+if(Object.values(S.players).filter(p=>p.alive).every(p=>S.meet.votes[p.id]))resolve();else bc();return}
+if(S.phase!=='play')return;
+if(d.t==='q'){if(!S.cur[d.id]&&S.sab<n){assignQ(d.id);bc()}}
+else if(d.t==='ans'){const c=S.cur[d.id];if(!c||S.sab>n)return;const ok=c.o[d.i]===H[d.id];S.last[d.id]={ok,s:((S.last[d.id]||{}).s||0)+1};delete S.cur[d.id];if(ok&&P.role==='c')P.done++;check();bc()}
+else if(d.t==='kill'){const T=S.players[d.tg];if(P.role!=='i'||!P.alive||P.kcd>n||!T||!T.alive||T.role==='i')return;T.alive=false;S.bodies.push(T.id);delete S.cur[T.id];P.kcd=n+cfg.kcd*1000;check();bc()}
+else if(d.t==='trick'){const T=S.players[d.tg];if(P.role!=='i'||!P.alive||(P.tcd||0)>n||!T||!T.alive||T.role==='i')return;P.tcd=n+15000;S.scr[T.id]=n+60000;if(S.cur[T.id]){decoys(S.cur[T.id].o);shuf(S.cur[T.id].o)}bc()}
+else if(d.t==='sab'){if(P.role!=='i'||!P.alive||S.sc>n)return;S.sab=n+12000;S.sc=n+30000;log('⚡ Sabotage! Quizzes locked');bc()}
+else if(d.t==='meet'){if(!P.alive)return;if(d.b){if(!S.bodies.length){log(`${P.n} searched but found nothing`);bc();return}}else{if(P.mt)return;P.mt=1}
+S.bodies.forEach(id=>S.players[id].rev=1);Object.values(S.players).forEach(p=>{if(!p.alive)p.rev=1});S.phase='meet';S.sab=0;S.meet={by:P.n,b:!!d.b,votes:{},until:n+30000};log(`🚨 ${P.n} called a meeting`);bc()}}
+function endGame(){S.phase='end';S.win='x';bc()}
+function again(){Object.values(S.players).forEach(p=>Object.assign(p,{role:'c',alive:true,done:0,rev:0}));Object.assign(S,{phase:'lobby',cur:{},bodies:[],sab:0,win:null,log:[]});H={};bc()}
+
+/* ---------- rendering ---------- */
+const bean=(c,s=56,d=0)=>`<svg width="${s}" height="${s*1.2}" viewBox="0 0 40 48" style="${d?'opacity:.45;filter:grayscale(.7)':''}"><rect x="3" y="19" width="9" height="17" rx="4" fill="${c}" style="filter:brightness(.7)"/><path d="M9 18C9 9 14 4 21 4S33 9 33 18V37Q33 41 29 41H25V34H17V41H13Q9 41 9 37Z" fill="${c}"/><path d="M9 28H33V37Q33 41 29 41H25V34H17V41H13Q9 41 9 37Z" fill="#000" opacity=".18"/><rect x="18" y="11" width="17" height="11" rx="5.5" fill="#9fe4f7" stroke="#1c2a3a" stroke-width="1.2"/><rect x="24" y="13" width="8" height="3" rx="1.5" fill="#fff" opacity=".8"/></svg>`;
+const hp=id=>{let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return[6+h%70,4+(h>>8)%50]};
+const nmc=p=>(host||(S.players[me.id]||{}).role==='i')&&p.role==='i'?'bad':'';
+const pc=p=>`<div class=pl>${bean(p.c,56,dead(p))}<b class="${nmc(p)}">${esc(p.n)}</b></div>`;
+const tb=()=>`<div class=tbar><i style="width:${S.goal?Math.min(100,prog()/S.goal*100):0}%"></i><span>TOTAL TASKS COMPLETED</span></div>`;
+const lobbyV=()=>`<div class=top><b>CODE</b><span class=pin>${S.pin}</span></div><div class=floor>${Object.values(S.players).map(pc).join('')||'<p class=c>Waiting for players…</p>'}</div><p class=c>${Object.keys(S.players).length}/15 players</p>`;
+const endV=()=>`<div class="end ${S.win==='c'?'v':'d'}"><h1>${S.win==='c'?'CREW WINS':S.win==='i'?'IMPOSTORS WIN':'GAME OVER'}</h1></div>`;
+function hostV(){const v=Object.values(S.players);
+if(S.phase==='lobby')return lobbyV()+`<button class="pri big" data-a=start ${v.length<3?'disabled':''}>START</button><p class=c>Need 3+ players. Students join with the code.</p>`;
+let h=`<div class=top><b>CODE</b><span class=pin>${S.pin}</span></div>${tb()}${S.phase==='meet'?'<div class=sb>🚨 Meeting in progress</div>':''}${S.sab>now()?'<div class=sb>⚡ Sabotage active</div>':''}`;
+h+=`<div class=floor>${v.map(p=>`<div class=pl>${bean(p.c,46,!p.alive)}<b class="${nmc(p)}">${esc(p.n)}</b><small>${p.role==='i'?'IMPOSTOR':'✔'+p.done}</small></div>`).join('')}</div><div class=log>${S.log.map(esc).join(' · ')}</div>`;
+return h+(S.phase==='end'?endV()+'<button class="pri big" data-a=again>NEW ROUND</button>':'<button class=ghost data-a=end>End game</button>')}
+function ejV(m){const k=Object.values(S.players).filter(p=>p.role==='i'&&p.alive).length;
+return `<div class=ej>${m.ec?bean(m.ec,90):''}<div>${esc(m.res)}</div><small class=c>${k} Impostor${k==1?'':'s'} remain</small></div>`}
+function meetV(P){const m=S.meet;if(m.done)return ejV(m);const mv=m.votes[P.id];
+return `<div class=mt><div class=mh><b>Who Is The Impostor?</b><span>Voting ends in <span data-u=${m.until}></span></span></div><p class=c>${esc(m.by)} ${m.b?'found a body':'called an emergency meeting'}</p><div class=vg>`+
+Object.values(S.players).map(p=>`<button class="vc${mv===p.id?' sel':''}" data-a=vote data-id=${p.id} ${!P.alive||!p.alive?'disabled':''}>${bean(p.c,30,!p.alive)}<b>${esc(p.n)}</b>${m.votes[p.id]?'<u>voted</u>':''}</button>`).join('')+
+`</div><button class="skip${mv==='skip'?' sel':''}" data-a=vote data-id=skip ${P.alive?'':'disabled'}>Skip Vote</button></div>`}
+function endP(P){const w=S.win===P.role;return `<div class="end ${w?'v':'d'}"><h1>${w?'VICTORY':'DEFEAT'}</h1><p class=c>${S.win==='c'?'The crew finished the job.':'The impostors took over.'}</p></div><div class=floor>${Object.values(S.players).map(p=>`<div class=pl>${bean(p.c,46,0)}<b class="${p.role==='i'?'bad':''}">${esc(p.n)}</b><small>${p.role==='i'?'Impostor':'Crewmate'}</small></div>`).join('')}</div>`}
+const hb=(a,ic,lb,dis,t,x='')=>`<button class=hb data-a=${a} ${x} ${dis?'disabled':''}><i>${ic}</i>${lb}${t?`<em data-u=${t}></em>`:''}</button>`;
+function playV(P){
+if(S.phase==='lobby')return lobbyV()+'<p class=c>Waiting for the host to start…</p>';
+if(S.phase==='end')return endP(P);
+if(S.phase==='meet')return meetV(P);
+const n=now(),sab=S.sab>n,c=S.cur[P.id],imp=P.role==='i',all=Object.values(S.players);
+if(S.rd!==ui.rd){ui.rd=S.rd;ui.rvu=Date.now()+4000;ui.q=0;ui.m='';setTimeout(paint,4100)}
+if(ui.rvu>Date.now()){const k=all.filter(p=>p.role==='i').length;return `<div class="rv ${imp?'bad':''}"><h1>${imp?'Impostor':'Crewmate'}</h1><p>${imp?'Sabotage and eliminate the crew':`There ${k>1?'are '+k+' Impostors':'is 1 Impostor'} among us`}</p><div class=floor>${(imp?all.filter(p=>p.role==='i'):all).map(pc).join('')}</div></div>`}
+const L=S.last[P.id];if(ui.ls===undefined)ui.ls=L?L.s:0;else if(L&&L.s!==ui.ls){ui.ls=L.s;ui.t=L.ok?'✅ Task complete!':'❌ Wrong answer';ui.tu=Date.now()+1800;setTimeout(paint,1900)}
+let h=`<div class="scr${sab?' sabo':''}">${tb()}<div class="rl ${P.role}">${imp?'Impostor':'Crewmate'}${P.alive?'':' · Ghost'}</div>`;
+if(sab)h+=`<div class=sb>⚡ SABOTAGE! Quizzes locked <span data-u=${S.sab}></span></div>`;
+h+=`<div class=room>${all.filter(p=>!dead(p)||p.id===P.id).map(p=>{const[x,y]=hp(p.id);return `<div class=pl style="left:${x}%;top:${y}%">${bean(p.c,50,dead(p))}<b class="${nmc(p)}">${esc(p.n)}</b></div>`}).join('')}</div><div class=log>${S.log.map(esc).join(' · ')}</div></div>`;
+if(ui.tu>Date.now())h+=`<div class=toast>${ui.t}</div>`;
+const kc=P.kcd>n,tc=(P.tcd||0)>n,sc=S.sc>n;
+h+='<div class=hud>'+(imp&&P.alive?hb('mode','🔪','KILL',kc,kc?P.kcd:0,'data-m=kill')+hb('sab','⚡','SABOTAGE',sc,sc?S.sc:0)+hb('mode','🎭','DECOY',tc,tc?P.tcd:0,'data-m=trick'):'')+hb('use','🖐','USE',sab)+(P.alive?hb('rep','📢','REPORT',0):'')+'</div>';
+if(P.alive)h+=`<button class=em data-a=emg ${P.mt?'disabled':''}>🚨<br>EMERGENCY</button>`;
+if(ui.m&&imp)h+=`<div class=mod><div class=win><div class=wt><b>${ui.m==='kill'?'Choose a crewmate to eliminate':'Add fake choices for…'}</b><button data-a=x>✕</button></div><div class=pk>${all.filter(p=>p.alive&&p.role==='c').map(p=>`<button data-a=tg data-id=${p.id}>${bean(p.c,40)}${esc(p.n)}</button>`).join('')}</div></div></div>`;
+if(ui.q&&!sab){let b;if(c)b=(imp?'<p>Fake task — answers don’t count</p>':'')+c.o.map((o,i)=>`<button class=opt data-a=ans data-i=${i}>${esc(o)}</button>`).join('');else{if(!ui.rq||Date.now()-ui.rq>1500){ui.rq=Date.now();G.emit('a',{t:'q',id:P.id})}b='<p>Loading task…</p>'}
+h+=`<div class=mod><div class=win><div class=wt><b>${c?esc(c.t):'Quiz Task'}</b><button data-a=x>✕</button></div>${b}</div></div>`}
+return h}
+function paint(){if(view!=='game')return;const a=$('#app');if(!S){a.innerHTML='<p class=c>Looking for room… check the code.</p>';return}
+const P=S.players[me.id];a.innerHTML=host?hostV():P?playV(P):'<p class=c>Joining…</p>'}
+$('#app').onclick=e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,d=b.dataset;
+if(host){if(a==='start')start();else if(a==='end')endGame();else if(a==='again')again();return}
+const send=o=>G.emit('a',Object.assign({id:me.id},o));
+if(a==='ans'){send({t:'ans',i:+d.i});ui.q=0;paint()}else if(a==='use'){ui.q=1;paint()}else if(a==='x'){ui.q=0;ui.m='';paint()}
+else if(a==='mode'){ui.m=d.m;paint()}else if(a==='tg'){send({t:ui.m,tg:d.id});ui.m='';paint()}else if(a==='sab')send({t:'sab'});
+else if(a==='rep')send({t:'meet',b:1});else if(a==='emg')send({t:'meet'});else if(a==='vote')send({t:'vote',tg:d.id})};
+setInterval(()=>{let z=0;document.querySelectorAll('[data-u]').forEach(e=>{const r=Math.ceil((+e.dataset.u-now())/1000);if(r>0)e.textContent=r+'s';else{e.textContent='';z=1}});if(z&&!ui.pz){ui.pz=1;paint()}else if(!z)ui.pz=0},500);
+showHome();
+</script></body></html>
